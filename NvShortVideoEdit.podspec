@@ -14,7 +14,7 @@ Pod::Spec.new do |spec|
 
   spec.platform              = :ios
   spec.static_framework      = false
-  spec.ios.deployment_target = '11.0'
+  spec.ios.deployment_target = '12.0'
   spec.ios.requires_arc      = true
 
   spec.ios.pod_target_xcconfig   = {
@@ -27,7 +27,6 @@ Pod::Spec.new do |spec|
   spec.subspec 'SourceFiles' do |s|
     s.source_files = 'SourceFiles/*'
     s.public_header_files = 'SourceFiles/*.h'
-    s.resources = 'Assets/*'
   end
   
   
