@@ -35,6 +35,9 @@ Pod::Spec.new do |spec|
   spec.ios.pod_target_xcconfig = {
     'EXCLUDED_ARCHS[sdk=iphonesimulator*]' => 'i386 x86_64 arm64'
   }
+  spec.ios.xcconfig = {
+    'EXCLUDED_ARCHS[sdk=iphonesimulator*]' => 'i386 x86_64 arm64'
+  }
 
   spec.ios.dependency 'SSZipArchive'
 
