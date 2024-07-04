@@ -32,6 +32,9 @@ Pod::Spec.new do |spec|
   
   #iOS sdk文件放在Frameworks文件夹下 需要的配置，
   spec.ios.vendored_frameworks = 'Frameworks/*.framework'
+  spec.ios.pod_target_xcconfig = {
+    'EXCLUDED_ARCHS[sdk=iphonesimulator*]' => 'i386 x86_64 arm64'
+  }
 
   spec.ios.dependency 'SSZipArchive'
 
