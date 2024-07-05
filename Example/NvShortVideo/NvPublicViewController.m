@@ -123,17 +123,17 @@
     if([_moduleManager saveCurrentDraftWithDraftInfo:self.textView.text]){
         [self finish:nil];
     }else{
-        [NvToast showInfoWithMessage:NSLocalizedString(@"Save_Failed", @"")];
+        [NvTipToast showInfoWithMessage:NSLocalizedString(@"Save_Failed", @"")];
     }
 }
 
 - (IBAction)compileBtClicked:(UIButton *)sender {
-    [NvToast showLoading];
+    [NvTipToast showLoading];
     if([_moduleManager compileCurrentTimeline:nil]){
         
     }else{
-        [NvToast dismiss];
-        [NvToast showInfoWithMessage:NSLocalizedString(@"Save_Failed", @"")];
+        [NvTipToast dismiss];
+        [NvTipToast showInfoWithMessage:NSLocalizedString(@"Save_Failed", @"")];
     }
 }
 
@@ -141,9 +141,9 @@
     [_moduleManager saveCover:self.imagePath with:^(BOOL success) {
         dispatch_async(dispatch_get_main_queue(), ^{
             if (success){
-                [NvToast showInfoWithMessage:NSLocalizedString(@"Save_Successful", @"")];
+                [NvTipToast showInfoWithMessage:NSLocalizedString(@"Save_Successful", @"")];
             }else{
-                [NvToast showInfoWithMessage:NSLocalizedString(@"Save_Failed", @"")];
+                [NvTipToast showInfoWithMessage:NSLocalizedString(@"Save_Failed", @"")];
             }
         });
     }];
@@ -172,11 +172,11 @@
 - (void)didCompileCompleted:(NSString*)outputPath error:(NSError*)error{
 //    WeakObjc(self);
     dispatch_async(dispatch_get_main_queue(), ^{
-        [NvToast dismiss];
+        [NvTipToast dismiss];
         if (error){
-            [NvToast showInfoWithMessage:NSLocalizedString(@"Save_Failed", @"")];
+            [NvTipToast showInfoWithMessage:NSLocalizedString(@"Save_Failed", @"")];
         }else{
-            [NvToast showInfoWithMessage:NSLocalizedString(@"Save_Successful", @"")];
+            [NvTipToast showInfoWithMessage:NSLocalizedString(@"Save_Successful", @"")];
         }
     });
 }

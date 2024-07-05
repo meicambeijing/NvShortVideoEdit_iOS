@@ -58,10 +58,10 @@
     }];
 }
 
--(void)loadDraftModel:(NvDraftModel*)draftModel{
-    NSString* imagePath = draftModel.coverFilePath;
+-(void)loadDraftModel:(NvEditProjectInfo*)draftModel{
+    NSString* imagePath = draftModel.coverImagePath;
     self.coverImageView.image = [UIImage imageWithContentsOfFile:imagePath];
-    self.infoLabel.text = (draftModel.draftInfo && draftModel.draftInfo.length>0) ? draftModel.draftInfo : NSLocalizedString(@"add_description", @"请添加描述～");
+    self.infoLabel.text = (draftModel.projectDescription && draftModel.projectDescription.length>0) ? draftModel.projectDescription : NSLocalizedString(@"add_description", @"请添加描述～");
 }
 
 @end
@@ -71,7 +71,7 @@
 @property(nonatomic,strong)UITableView* tableView;
 @property(nonatomic,strong)UILabel* infoLabel;
 
-@property(nonatomic,strong)NSMutableArray<NvDraftModel*> * draftArray;
+@property(nonatomic,strong)NSMutableArray<NvEditProjectInfo*> * draftArray;
 
 @property (nonatomic, strong) NvVideoConfig *config;
 
@@ -115,13 +115,15 @@
     self.tableView.separatorStyle = UITableViewCellSeparatorStyleNone;
     self.tableView.tableFooterView = [UIView new];
     [self.tableView registerClass:NvDraftCell.self forCellReuseIdentifier:@"NvDraftCell"];
+    
+    self.draftArray = [NvModuleManager projectList].mutableCopy;
+    [self.tableView reloadData];
 }
 
 -(void)viewWillAppear:(BOOL)animated{
     [super viewWillAppear:animated];
     [self.navigationController setNavigationBarHidden:NO animated:animated];
-    self.draftArray = [NvDraftManager getUserDraftFileArray];
-    [self.tableView reloadData];
+    
 }
 
 - (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath{
@@ -134,15 +136,15 @@
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath{
     NvDraftCell* cell = (NvDraftCell*)[tableView dequeueReusableCellWithIdentifier:@"NvDraftCell" forIndexPath:indexPath];
-    NvDraftModel* draftModel = self.draftArray[indexPath.row];
+    NvEditProjectInfo* draftModel = self.draftArray[indexPath.row];
     [cell loadDraftModel:draftModel];
     return cell;
 }
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath{
     [tableView deselectRowAtIndexPath:indexPath animated:YES];
-    NvDraftModel* draftModel = self.draftArray[indexPath.row];
-    [NvModuleManager.sharedInstance reeditDraft:draftModel presentViewController:self config:self.config];
+    NvEditProjectInfo* draftModel = self.draftArray[indexPath.row];
+    [NvModuleManager.sharedInstance reeditProject:draftModel presentViewController:self config:self.config];
 }
 
 - (BOOL)tableView:(UITableView *)tableView canEditRowAtIndexPath:(NSIndexPath *)indexPath {
@@ -158,10 +160,13 @@
         UIAlertController *alertController = [UIAlertController alertControllerWithTitle:NSLocalizedString(@"DraftDelete", @"确定删除") message:@"" preferredStyle:UIAlertControllerStyleAlert];
 
         UIAlertAction *okAction = [UIAlertAction actionWithTitle:NSLocalizedString(@"DraftConfirm", @"是") style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
-            NvDraftModel* draftModel = self.draftArray[indexPath.row];
-            [NvDraftManager deleteDraftFile:draftModel];
-            [self.draftArray removeObjectAtIndex:indexPath.row];
-            [tableView deleteRowsAtIndexPaths:@[indexPath] withRowAnimation:UITableViewRowAnimationFade];
+            NvEditProjectInfo* draftModel = self.draftArray[indexPath.row];
+            if([NvModuleManager deleteDraft:draftModel.projectId]) {
+                [self.draftArray removeObjectAtIndex:indexPath.row];
+                [tableView deleteRowsAtIndexPaths:@[indexPath] withRowAnimation:UITableViewRowAnimationFade];
+            }else{
+                NSLog(@"删除失败");
+            }
         }];
         UIAlertAction *cancelAction = [UIAlertAction actionWithTitle:NSLocalizedString(@"DraftCancel", @"否") style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
             
@@ -174,5 +179,16 @@
     }
 }
 
-@end
+- (BOOL)shouldAutorotate {
+    return NO;
+}
 
+- (UIInterfaceOrientationMask)supportedInterfaceOrientations {
+    return UIInterfaceOrientationMaskPortrait;
+}
+
+- (UIInterfaceOrientation)preferredInterfaceOrientationForPresentation {
+    return UIInterfaceOrientationPortrait;
+}
+
+@end
