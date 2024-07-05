@@ -38,7 +38,7 @@ Pod::Spec.new do |spec|
   }
 
   spec.ios.user_target_xcconfig = {
-    'EXCLUDED_ARCHS[sdk=iphonesimulator*]' => 'i386 x86_64 arm64'
+    'EXCLUDED_ARCHS[sdk=iphonesimulator*]' => 'i386 x86_64 arm64',
     'ARCHS' => '$(ARCHS_STANDARD)'
   }
 
