@@ -62,7 +62,7 @@ typedef NS_ENUM(NSInteger, NvDownloadStatus) {
  *  \param failure 失败回调
  *  \endif
 */
-- (NSUInteger)requestDataWithType:(NvMaterialType)type
+- (NSInteger)requestDataWithType:(NvMaterialType)type
                          category:(NSInteger)category
                              kind:(NSInteger)kind
         optionalRequestParameters:(NSMutableDictionary *)optionalRequestParameters
@@ -152,7 +152,7 @@ typedef NS_ENUM(NSInteger, NvDownloadStatus) {
  *  \param completionHandler 结果回调
  *  \endif
 */
-- (NSUInteger)downloadMaterial:(NvMaterial *)material
+- (NSInteger)downloadMaterial:(NvMaterial *)material
                   targetFolder:(NSString *)targetFolder
               packExtensionSet:(NSMutableArray *__nullable)packExtensionSet
                  optParameters:(NSMutableDictionary *__nullable)optParameters
@@ -329,7 +329,7 @@ typedef NS_ENUM(NSInteger, NvDownloadStatus) {
 /// Download Resources
 /// @param material 资源信息
 /// @param optParameters 自定义参数
-- (NSUInteger)downloadMaterial:(NvMaterial *)material optParameters:(NSMutableDictionary *__nullable)optParameters;
+- (NSInteger)downloadMaterial:(NvMaterial *)material optParameters:(NSMutableDictionary *__nullable)optParameters;
 
 
 /*! \if ENGLISH

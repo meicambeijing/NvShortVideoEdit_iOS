@@ -6,7 +6,6 @@
 //
 
 #import "NvDraftListViewController.h"
-#import "Masonry.h"
 
 #if __has_include(<NvShortVideoCore/NvShortVideoCore.h>)
 #import <NvShortVideoCore/NvShortVideoCore.h>
@@ -40,11 +39,18 @@
     self.coverImageView = [[UIImageView alloc] initWithFrame:CGRectMake(0, 0, 30, 30)];
     self.coverImageView.contentMode = UIViewContentModeScaleAspectFit;
     [self.contentView addSubview:self.coverImageView];
-    [self.coverImageView mas_makeConstraints:^(MASConstraintMaker *make) {
-        make.width.height.mas_equalTo(70);
-        make.centerY.equalTo(self.contentView.mas_centerY);
-        make.left.equalTo(self.contentView.mas_left).offset(20);
-    }];
+    self.coverImageView.translatesAutoresizingMaskIntoConstraints = NO;
+    // 宽度和高度约束
+    [NSLayoutConstraint activateConstraints:@[
+        [self.coverImageView.widthAnchor constraintEqualToConstant:70],
+        [self.coverImageView.heightAnchor constraintEqualToConstant:70],
+        
+        // 垂直中心约束
+        [self.coverImageView.centerYAnchor constraintEqualToAnchor:self.contentView.centerYAnchor],
+        
+        // 左边距约束
+        [self.coverImageView.leftAnchor constraintEqualToAnchor:self.contentView.leftAnchor constant:20]
+    ]];
     self.coverImageView.backgroundColor = [UIColor blackColor];
     CGRect rect = [UIScreen mainScreen].bounds;
     self.infoLabel = [[UILabel alloc] initWithFrame:CGRectMake(15, 0, rect.size.width-30, 40)];
@@ -52,10 +58,16 @@
     self.infoLabel.font = [UIFont systemFontOfSize:12];
     self.infoLabel.text = NSLocalizedString(@"add_description", @"请添加描述～");
     [self.contentView addSubview:self.infoLabel];
-    [self.infoLabel mas_makeConstraints:^(MASConstraintMaker *make) {
-        make.left.equalTo(self.coverImageView.mas_right).offset(15);
-        make.top.equalTo(self.coverImageView);
-    }];
+    self.infoLabel.translatesAutoresizingMaskIntoConstraints = NO;
+
+    // 左边距和顶部约束
+    [NSLayoutConstraint activateConstraints:@[
+        // 左边距约束
+        [self.infoLabel.leftAnchor constraintEqualToAnchor:self.coverImageView.rightAnchor constant:15],
+        
+        // 顶部约束
+        [self.infoLabel.topAnchor constraintEqualToAnchor:self.coverImageView.topAnchor]
+    ]];
 }
 
 -(void)loadDraftModel:(NvEditProjectInfo*)draftModel{

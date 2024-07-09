@@ -12,6 +12,7 @@
 #import "NvRecognitionTextItem.h"
 #import "NvMaterialCenter.h"
 #import "NvVoiceRecognizer.h"
+#import "NvWebImageDelegate.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -156,6 +157,16 @@ videoEditNavigationController:(UINavigationController *)videoEditNavigationContr
  *  \endif
 */
 @property(nonatomic, weak) id<NvMaterialCenterNetworkDelegate> netDelegate;
+
+/*! \if ENGLISH
+ *
+ *  \brief Network image delegate
+ *  \else
+ *
+ *  \brief 网络图片代理
+ *  \endif
+*/
+@property(nonatomic, weak) id<NvWebImageDelegate> webImageDelegate;
 
 /*!
  * \if ENGLISH

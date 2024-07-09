@@ -44,14 +44,7 @@ Pod::Spec.new do |spec|
 
 
   spec.ios.dependency 'SSZipArchive'
-
-  spec.ios.dependency 'Masonry'
-  spec.ios.dependency 'MJRefresh'
-  spec.ios.dependency 'YYCache'
-  spec.ios.dependency 'YYImage'
-  spec.ios.dependency 'YYModel'
-  spec.ios.dependency 'YYWebImage'
-  spec.ios.dependency 'YYImage/WebP'
+  spec.ios.dependency 'SDWebImageWebPCoder'
 
 end
 

@@ -1679,32 +1679,86 @@ SWIFT_CLASS("_TtC16NvShortVideoCore17NvRectViewManager")
 
 SWIFT_CLASS("_TtC16NvShortVideoCore18NvRefreshComponent")
 @interface NvRefreshComponent : UIView
+@property (nonatomic, readonly, weak) UIScrollView * _Nullable scrollView;
+/// 记录scrollView刚开始的inset / Records the beginning inset of the scrollView
+@property (nonatomic) UIEdgeInsets originalInset;
+/// 拉拽的百分比(交给子类重写) / Percentage of drag (let subclass override)
+@property (nonatomic) CGFloat pullingPercent;
+/// 根据拖拽比例自动切换透明度 / Automatically toggles transparency according to drag ratio
+@property (nonatomic) BOOL isAutomaticallyChangeAlpha;
+@property (nonatomic, readonly) BOOL isRefreshing;
 - (nonnull instancetype)initWithFrame:(CGRect)frame OBJC_DESIGNATED_INITIALIZER;
+- (void)configRefreshEventWithTarget:(id _Nonnull)target action:(SEL _Nonnull)action;
+- (void)executeRefreshingCallback;
+- (void)prepare;
+- (void)beginRefreshing;
+- (void)endRefreshing;
+- (void)configScrollViewBounce:(UIView * _Nullable)_;
+- (void)placeSubviews;
+- (void)scrollViewContentOffsetDidChangedWithChange:(NSDictionary<NSKeyValueChangeKey, id> * _Nullable)_;
+- (void)scrollViewContentSizeDidChangedWithChange:(NSDictionary<NSKeyValueChangeKey, id> * _Nullable)_;
+- (void)scrollViewPanStateDidChangedWithChange:(NSDictionary<NSKeyValueChangeKey, id> * _Nullable)_;
 - (nullable instancetype)initWithCoder:(NSCoder * _Nonnull)_ OBJC_DESIGNATED_INITIALIZER SWIFT_UNAVAILABLE;
 @end
 
 
 SWIFT_CLASS("_TtC16NvShortVideoCore15NvRefreshFooter")
 @interface NvRefreshFooter : NvRefreshComponent
+@property (nonatomic) CGFloat ignoredScrollViewContentInsetBottom;
+- (void)prepare;
+- (void)configScrollViewBounce:(UIView * _Nullable)newSuperview;
+- (void)endRefreshingWithNoMoreData;
+- (void)resetNoMoreData;
 - (nonnull instancetype)initWithFrame:(CGRect)frame OBJC_DESIGNATED_INITIALIZER;
 @end
 
+@class UILabel;
+@class UIActivityIndicatorView;
 
 SWIFT_CLASS("_TtC16NvShortVideoCore19NvRefreshAutoFooter")
 @interface NvRefreshAutoFooter : NvRefreshFooter
+@property (nonatomic) CGFloat labelLeftInset;
+@property (nonatomic, readonly, weak) UILabel * _Nullable stateLabel;
+@property (nonatomic, readonly, weak) UIImageView * _Nullable arrowView;
+@property (nonatomic, readonly, weak) UIActivityIndicatorView * _Nullable loadingView;
++ (NvRefreshAutoFooter * _Nonnull)footerForTarget:(id _Nonnull)target action:(SEL _Nonnull)action SWIFT_WARN_UNUSED_RESULT;
+- (void)prepare;
+- (void)placeSubviews;
+- (void)configScrollViewBounce:(UIView * _Nullable)newSuperview;
+- (void)scrollViewContentOffsetDidChangedWithChange:(NSDictionary<NSKeyValueChangeKey, id> * _Nullable)change;
+- (void)scrollViewContentSizeDidChangedWithChange:(NSDictionary<NSKeyValueChangeKey, id> * _Nullable)change;
 - (nonnull instancetype)initWithFrame:(CGRect)frame OBJC_DESIGNATED_INITIALIZER;
 @end
 
 
+@class NSDate;
 
 SWIFT_CLASS("_TtC16NvShortVideoCore15NvRefreshHeader")
 @interface NvRefreshHeader : NvRefreshComponent
+@property (nonatomic) CGFloat spacing;
+@property (nonatomic, copy) NSString * _Nonnull lastUpdatedTimeKey;
+@property (nonatomic, readonly, copy) NSDate * _Nonnull lastUpdatedTime;
+@property (nonatomic) CGFloat ignoredScrollViewContentInsetTop;
+- (void)prepare;
+- (void)configScrollViewBounce:(UIView * _Nullable)newSuperview;
+- (void)placeSubviews;
+- (void)scrollViewContentOffsetDidChangedWithChange:(NSDictionary<NSKeyValueChangeKey, id> * _Nullable)change;
 - (nonnull instancetype)initWithFrame:(CGRect)frame OBJC_DESIGNATED_INITIALIZER;
 @end
 
 
 SWIFT_CLASS("_TtC16NvShortVideoCore19NvRefreshAutoHeader")
 @interface NvRefreshAutoHeader : NvRefreshHeader
+@property (nonatomic, readonly, weak) UILabel * _Nullable lastUpdatedTimeLabel;
+@property (nonatomic, readonly, weak) UILabel * _Nullable stateLabel;
+@property (nonatomic, readonly, weak) UIImageView * _Nullable arrowView;
+@property (nonatomic, readonly, weak) UIActivityIndicatorView * _Nullable loadingView;
+/// 文字距离圈圈、箭头的距离
+@property (nonatomic) CGFloat labelLeftInset;
+@property (nonatomic, copy) NSString * _Nonnull lastUpdatedTimeKey;
++ (NvRefreshAutoHeader * _Nonnull)headerForTarget:(id _Nonnull)target action:(SEL _Nonnull)action SWIFT_WARN_UNUSED_RESULT;
+- (void)prepare;
+- (void)placeSubviews;
 - (nonnull instancetype)initWithFrame:(CGRect)frame OBJC_DESIGNATED_INITIALIZER;
 @end
 
@@ -1712,12 +1766,24 @@ SWIFT_CLASS("_TtC16NvShortVideoCore19NvRefreshAutoHeader")
 
 SWIFT_CLASS("_TtC16NvShortVideoCore16NvRefreshTrailer")
 @interface NvRefreshTrailer : NvRefreshComponent
+@property (nonatomic) CGFloat ignoredScrollViewContentInsetRight;
+- (void)configScrollViewBounce:(UIView * _Nullable)newSuperview;
+- (void)placeSubviews;
+- (void)endRefreshingWithNoMoreData;
+- (void)resetNoMoreData;
+- (void)scrollViewContentOffsetDidChangedWithChange:(NSDictionary<NSKeyValueChangeKey, id> * _Nullable)change;
+- (void)scrollViewContentSizeDidChangedWithChange:(NSDictionary<NSKeyValueChangeKey, id> * _Nullable)change;
 - (nonnull instancetype)initWithFrame:(CGRect)frame OBJC_DESIGNATED_INITIALIZER;
 @end
 
 
 SWIFT_CLASS("_TtC16NvShortVideoCore20NvRefreshAutoTrailer")
 @interface NvRefreshAutoTrailer : NvRefreshTrailer
+@property (nonatomic, readonly, weak) UILabel * _Nullable stateLabel;
+@property (nonatomic, readonly, weak) UIImageView * _Nullable arrowView;
++ (NvRefreshAutoTrailer * _Nonnull)trailerForTarget:(id _Nonnull)target action:(SEL _Nonnull)action SWIFT_WARN_UNUSED_RESULT;
+- (void)prepare;
+- (void)placeSubviews;
 - (nonnull instancetype)initWithFrame:(CGRect)frame OBJC_DESIGNATED_INITIALIZER;
 @end
 
@@ -1965,20 +2031,20 @@ SWIFT_CLASS_PROPERTY(@property (nonatomic, class, readonly, strong) NvTemplateMa
 @class NSMutableDictionary;
 
 @interface NvTemplateMaterialCenter (SWIFT_EXTENSION(NvShortVideoCore))
-- (void)findMaterialCategoryTypeWithType:(NSInteger)type succesddds:(void (^ _Nonnull)(NSArray * _Nonnull, BOOL, NSObject * _Nonnull))succesddds failure:(void (^ _Nonnull)(NSError * _Nonnull))failure;
-- (void)requestListWithType:(NSInteger)type category:(NSInteger)category kind:(NSInteger)kind pageIndex:(NSInteger)pageIndex succesddds:(void (^ _Nonnull)(NSArray * _Nonnull, BOOL, NSObject * _Nonnull))succesddds failure:(void (^ _Nonnull)(NSError * _Nonnull))failure;
-- (void)downloadMaterialWithUuid:(NSString * _Nonnull)uuid url:(NSString * _Nonnull)url targetFolder:(NSString * _Nonnull)targetFolder optParameters:(NSMutableDictionary * _Nonnull)optParameters progress:(void (^ _Nonnull)(float))progress success:(void (^ _Nonnull)(NSArray * _Nonnull, BOOL, NSObject * _Nonnull))success failure:(void (^ _Nonnull)(NSError * _Nonnull))failure;
-- (void)autoCutListMaterialWithParam:(NSDictionary<NSString *, id> * _Nonnull)param success:(void (^ _Nonnull)(NSArray * _Nonnull, BOOL, NSObject * _Nonnull))success failure:(void (^ _Nonnull)(NSError * _Nonnull))failure;
+- (void)findMaterialCategoryTypeWithType:(NSInteger)type succesddds:(void (^ _Nonnull)(NSArray * _Nonnull, BOOL, NSObject * _Nonnull))succesddds failure:(void (^ _Nonnull)(NSError * _Nullable))failure;
+- (void)requestListWithType:(NSInteger)type category:(NSInteger)category kind:(NSInteger)kind pageIndex:(NSInteger)pageIndex succesddds:(void (^ _Nonnull)(NSArray * _Nonnull, BOOL, NSObject * _Nonnull))succesddds failure:(void (^ _Nonnull)(NSError * _Nullable))failure;
+- (void)downloadMaterialWithUuid:(NSString * _Nonnull)uuid url:(NSString * _Nonnull)url targetFolder:(NSString * _Nonnull)targetFolder optParameters:(NSMutableDictionary * _Nonnull)optParameters progress:(void (^ _Nonnull)(float))progress success:(void (^ _Nonnull)(NSArray * _Nonnull, BOOL, NSObject * _Nonnull))success failure:(void (^ _Nonnull)(NSError * _Nullable))failure;
+- (void)autoCutListMaterialWithParam:(NSDictionary<NSString *, id> * _Nonnull)param success:(void (^ _Nonnull)(NSArray * _Nonnull, BOOL, NSObject * _Nonnull))success failure:(void (^ _Nonnull)(NSError * _Nullable))failure;
 @end
 
 @class NSURLSessionDataTask;
 
 SWIFT_PROTOCOL("_TtP16NvShortVideoCore32NvTemplateMaterialCenterDelegate_")
 @protocol NvTemplateMaterialCenterDelegate
-- (void)templateRequestListCategoryWithType:(NSInteger)type optionalRequestParameters:(NSMutableDictionary * _Nonnull)optionalRequestParameters success:(void (^ _Nonnull)(NSArray * _Nonnull, BOOL, NSObject * _Nonnull))success failure:(void (^ _Nonnull)(NSError * _Nonnull))failure;
-- (void)templateRequestListDataWithType:(NSInteger)type category:(NSInteger)category kind:(NSInteger)kind optionalRequestParameters:(NSMutableDictionary * _Nonnull)optionalRequestParameters pageIndex:(NSInteger)pageIndex success:(void (^ _Nonnull)(NSArray * _Nonnull, BOOL, NSObject * _Nonnull))success failure:(void (^ _Nonnull)(NSError * _Nonnull))failure;
-- (void)templateDownloadMaterialWithUuid:(NSString * _Nonnull)uuid url:(NSString * _Nonnull)url targetFolder:(NSString * _Nonnull)targetFolder optParameters:(NSMutableDictionary * _Nonnull)optParameters progress:(void (^ _Nonnull)(float))progress success:(void (^ _Nonnull)(NSArray * _Nonnull, BOOL, NSObject * _Nonnull))success failure:(void (^ _Nonnull)(NSError * _Nonnull))failure;
-- (NSURLSessionDataTask * _Nonnull)autoCutListMaterialWithParam:(NSDictionary<NSString *, id> * _Nonnull)param success:(void (^ _Nonnull)(NSArray * _Nonnull, BOOL, NSObject * _Nonnull))success failure:(void (^ _Nonnull)(NSError * _Nonnull))failure SWIFT_WARN_UNUSED_RESULT;
+- (void)templateRequestListCategoryWithType:(NSInteger)type optionalRequestParameters:(NSMutableDictionary * _Nonnull)optionalRequestParameters success:(void (^ _Nonnull)(NSArray * _Nonnull, BOOL, NSObject * _Nonnull))success failure:(void (^ _Nonnull)(NSError * _Nullable))failure;
+- (void)templateRequestListDataWithType:(NSInteger)type category:(NSInteger)category kind:(NSInteger)kind optionalRequestParameters:(NSMutableDictionary * _Nonnull)optionalRequestParameters pageIndex:(NSInteger)pageIndex success:(void (^ _Nonnull)(NSArray * _Nonnull, BOOL, NSObject * _Nonnull))success failure:(void (^ _Nonnull)(NSError * _Nullable))failure;
+- (void)templateDownloadMaterialWithUuid:(NSString * _Nonnull)uuid url:(NSString * _Nonnull)url targetFolder:(NSString * _Nonnull)targetFolder optParameters:(NSMutableDictionary * _Nonnull)optParameters progress:(void (^ _Nonnull)(float))progress success:(void (^ _Nonnull)(NSArray * _Nonnull, BOOL, NSObject * _Nonnull))success failure:(void (^ _Nonnull)(NSError * _Nullable))failure;
+- (NSURLSessionDataTask * _Nonnull)autoCutListMaterialWithParam:(NSDictionary<NSString *, id> * _Nonnull)param success:(void (^ _Nonnull)(NSArray * _Nonnull, BOOL, NSObject * _Nonnull))success failure:(void (^ _Nonnull)(NSError * _Nullable))failure SWIFT_WARN_UNUSED_RESULT;
 @end
 
 @class NvTemplateHomeDataErrorTheme;
@@ -2503,6 +2569,13 @@ SWIFT_CLASS_PROPERTY(@property (nonatomic, class, readonly) BOOL isIphone7;)
 
 
 
+
+@interface UIScrollView (SWIFT_EXTENSION(NvShortVideoCore))
+@property (nonatomic, strong) NvRefreshAutoHeader * _Nullable nv_header;
+@property (nonatomic, strong) NvRefreshAutoFooter * _Nullable nv_footer;
+@property (nonatomic, strong) NvRefreshAutoTrailer * _Nullable nv_trailer;
+- (NSInteger)nv_totalDataCount SWIFT_WARN_UNUSED_RESULT;
+@end
 
 
 

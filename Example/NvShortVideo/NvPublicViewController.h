@@ -14,7 +14,7 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, strong) NSString *imagePath;
 @property (nonatomic, strong, nullable) NSString *draftInfo;
 @property (nonatomic, assign) BOOL hasDraft;
-@property (nonatomic, strong) NSString *taskId;
+@property (nonatomic, strong) NSString *projectId;
 
 @end
 

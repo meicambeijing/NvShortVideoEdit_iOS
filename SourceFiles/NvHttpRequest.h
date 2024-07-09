@@ -20,7 +20,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 @end
 
-@interface NvHttpRequest : NSObject <NvMaterialCenterNetworkDelegate>
+@interface NvHttpRequest : NSObject <NvMaterialCenterNetworkDelegate, NvWebImageDelegate>
 
 /// 根据分类获取素材列表
 /// Get a list of materials by category

@@ -3,14 +3,21 @@
 //  NvHttpRequest.m
 //  NvCheez
 //
-//  Created by shizhouhu on 2018/6/5.
-//  Copyright © 2018年 shizhouhu. All rights reserved.
+//  Created by meishe on 2018/6/5.
+//  Copyright © 2018年 meishe. All rights reserved.
 //
 
 #import "NvHttpRequest.h"
-#import <YYModel/YYModel.h>
 #import <CommonCrypto/CommonDigest.h>
+
+#if __has_include(<SDWebImageWebPCoder/SDWebImageWebPCoder.h>)
+#import <SDWebImage/SDWebImage.h>
+#import <SDWebImageWebPCoder/SDWebImageWebPCoder.h>
+#endif
+
+#if __has_include(<SSZipArchive/SSZipArchive.h>)
 #import <SSZipArchive/SSZipArchive.h>
+#endif
 
 #define DownloadMaterialZIP
 
@@ -57,6 +64,10 @@ static NvHttpRequest *sharedInstance = nil;
         
         NSURLSessionConfiguration *configuration = [NSURLSessionConfiguration defaultSessionConfiguration];
         self.urlSession = [NSURLSession sessionWithConfiguration:configuration];
+        
+        // Add coder
+        SDImageWebPCoder *webPCoder = [SDImageWebPCoder sharedCoder];
+        [[SDImageCodersManager sharedManager] addCoder:webPCoder];
     }
     return self;
 }
@@ -242,13 +253,13 @@ static NvHttpRequest *sharedInstance = nil;
     }];
 }
 
--(NSUInteger)requestDataWithType:(NvMaterialType)type
-                        category:(NSInteger)category
-                            kind:(NSInteger)kind
-       optionalRequestParameters:(NSMutableDictionary*)optionalRequestParameters
-                       pageIndex:(NSInteger)pageIndex
-                         success:(NvRequestSuccess)success
-                         failure:(NvRequestFailure)failure{
+- (NSInteger)requestDataWithType:(NvMaterialType)type
+                         category:(NSInteger)category
+                             kind:(NSInteger)kind
+        optionalRequestParameters:(NSMutableDictionary*)optionalRequestParameters
+                        pageIndex:(NSInteger)pageIndex
+                          success:(NvRequestSuccess)success
+                          failure:(NvRequestFailure)failure{
     
     NSMutableDictionary* requestParameters = [NSMutableDictionary dictionaryWithDictionary:optionalRequestParameters];
     requestParameters[@"pageNum"] = @(pageIndex+1);
@@ -335,7 +346,7 @@ static NvHttpRequest *sharedInstance = nil;
     }];
 }
 
--(NSUInteger)downloadMaterial:(NvMaterial*)material
+-(NSInteger)downloadMaterial:(NvMaterial*)material
                  targetFolder:(NSString*)targetFolder
              packExtensionSet:(NSMutableArray* __nullable)packExtensionSet
                 optParameters:(NSMutableDictionary* __nullable)optParameters
@@ -442,7 +453,7 @@ typedef void (^NvDownloadCompletionHandler)(NSString * __nullable packagePath,
                                             NSError * __nullable error);
 
 
--(NSUInteger)requestDownloadMaterial:(NvMaterial *)material
+-(NSInteger)requestDownloadMaterial:(NvMaterial *)material
                           packageUrl:(NSString *)packageUrl
                         targetFolder:(NSString *)targetFolder
                     packExtensionSet:(NSMutableArray *)packExtensionSet
@@ -511,17 +522,18 @@ typedef void (^NvDownloadCompletionHandler)(NSString * __nullable packagePath,
             [fm removeItemAtURL:filePath error:nil];
 #else
             //2，下载的是zip，解压出.videofx和.lic文件，解压到目标路径
+            NSError* unpackError = nil;
             NSString* zipFileNameFull = packageUrl.lastPathComponent;//response.suggestedFilename;//
             NSString* zipFileName = zipFileNameFull.stringByDeletingPathExtension;
-            
             NSString* unzipPath = [self.downloadTmpPath stringByAppendingPathComponent:zipFileName];
-            NSError* unpackError = nil;
-            if([SSZipArchive unzipFileAtPath:location.path toDestination:unzipPath overwrite:YES password:nil error:&unpackError]){
+            [fm removeItemAtPath:unzipPath error:nil];
+            if ([self unzipWithPath:location.path destination:unzipPath]) {
                 //根据packExtensionSet中后缀名找文件,移动到targetFolder
                 if (material.type == NvMaterialTypeLooks) {
                     //需要解压妆容
                     __block NSString *packageFile = @"";
-                    [[[NSFileManager defaultManager] subpathsAtPath:unzipPath] enumerateObjectsUsingBlock:^(NSString * _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
+                    NSArray<NSString *> *subpaths = [[NSFileManager defaultManager] subpathsAtPath:unzipPath];
+                    [subpaths enumerateObjectsUsingBlock:^(NSString * _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
                         if ([obj hasSuffix:@"zip"]) {
                             packageFile = [unzipPath stringByAppendingPathComponent:obj];
                             *stop = YES;
@@ -534,7 +546,7 @@ typedef void (^NvDownloadCompletionHandler)(NSString * __nullable packagePath,
                         [[NSFileManager defaultManager] createDirectoryAtPath:targetFile withIntermediateDirectories:YES attributes:nil error:nil];
                     }
                     if (packageFile.length > 0){
-                        if([SSZipArchive unzipFileAtPath:packageFile toDestination:targetFile overwrite:YES password:nil error:&unpackError]){
+                        if ([self unzipWithPath:packageFile destination:targetFile]) {
                             [[[NSFileManager defaultManager] subpathsAtPath:unzipPath] enumerateObjectsUsingBlock:^(NSString * _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
                                 if ([obj hasSuffix:@"lic"]) {
                                     NSString *licPath = [unzipPath stringByAppendingPathComponent:obj];
@@ -542,10 +554,10 @@ typedef void (^NvDownloadCompletionHandler)(NSString * __nullable packagePath,
                                 }
                             }];
                             completionHandler(targetFile,nil,nil,material.uuid,unpackError);
-                        }else{
+                        } else {
                             completionHandler(nil,nil,nil,material.uuid,unpackError);
                         }
-                    }else{
+                    } else {
                         packageFile = unzipPath;
                         
                         // 遍历源文件夹中的所有文件和子文件夹
@@ -961,6 +973,34 @@ typedef void (^NvDownloadCompletionHandler)(NSString * __nullable packagePath,
     }];
     [dataTask resume];
     return dataTask;
+}
+
+// MARK: -- NvWebImageDelegate
+- (void)fetchImageForImageView:(UIImageView *)imageView
+                          url:(NSURL *)url
+                  placeholder:(UIImage *_Nullable)placeholder
+                    completion:(void (^ _Nullable)(UIImage * _Nullable image))completion {
+#if __has_include(<SDWebImageWebPCoder/SDWebImageWebPCoder.h>)
+    [imageView sd_setImageWithURL:url placeholderImage:placeholder completed:^(UIImage * _Nullable image, NSError * _Nullable error, SDImageCacheType cacheType, NSURL * _Nullable imageURL) {
+        if (completion) {
+            completion(image);
+        }
+    }];
+#endif
+}
+
+// MARK: -- Zip
+- (BOOL)unzipWithPath:(NSString *)path destination:(NSString *)destination {
+#if __has_include(<SSZipArchive/SSZipArchive.h>)
+    NSError* unpackError = nil;
+    BOOL ret = [SSZipArchive unzipFileAtPath:path toDestination:destination overwrite:YES password:nil error:&unpackError];
+    if (unpackError) {
+        NSLog(@"unzip error: %@", unpackError);
+    }
+    return ret;
+#else
+    NSLog(@"♥️: zip decompression not implemented");
+#endif
 }
 
 @end

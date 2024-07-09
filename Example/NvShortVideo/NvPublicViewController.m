@@ -159,11 +159,11 @@
     [[NSFileManager defaultManager] removeItemAtPath:outputPath error:nil];
     if (self.presentingViewController.presentingViewController){
         [self.presentingViewController.presentingViewController dismissViewControllerAnimated:YES completion:^{
-            [self->_moduleManager exitVideoEdit:self.taskId];
+            [self->_moduleManager exitVideoEdit:self.projectId];
         }];
     }else{
         [self.navigationController dismissViewControllerAnimated:YES completion:^{
-            [self->_moduleManager exitVideoEdit:self.taskId];
+            [self->_moduleManager exitVideoEdit:self.projectId];
         }];
     }
 }

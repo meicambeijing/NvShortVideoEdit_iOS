@@ -11,7 +11,6 @@
 
 #import "NvPublicViewController.h"
 #import "NvDraftListViewController.h"
-#import <YYModel/YYModel.h>
 #import "NvHttpRequestUtlHeader.h"
 
 //#import "NvQCloudFileRecognizer.h"
@@ -108,9 +107,9 @@
     NvHttpRequest *request = [NvHttpRequest sharedInstance];
     [self configUrl:request];
     
-    NvMaterialCenter* materialCenter = [NvMaterialCenter sharedInstance];
-    materialCenter.netDelegate = request;
-    [materialCenter prepareDownloadFolders];
+    moduleManager.netDelegate = request;
+    moduleManager.webImageDelegate = request;
+    [moduleManager prepareDownloadFolders];
     
     [self networkState];
 }
@@ -348,16 +347,17 @@
 }
 
 
-- (void)publishWithTaskId:(NSString *)taskId
-           coverImagePath:(NSString *)coverImagePath
-                 hasDraft:(BOOL)hasDraft
-                draftInfo:(NSString *_Nullable)draftInfo
-videoEditNavigationController:(UINavigationController *)videoEditNavigationController {
+- (void)publishWithProjectId:(nonnull NSString *)projectId
+              coverImagePath:(nonnull NSString *)coverImagePath
+                    hasDraft:(BOOL)hasDraft
+                   videoPath:(NSString * _Nullable)videoPath
+                 description:(NSString * _Nullable)description
+videoEditNavigationController:(nonnull UINavigationController *)videoEditNavigationController {
     NvPublicViewController *publicVc = [[UIStoryboard storyboardWithName:@"Main" bundle:nil] instantiateViewControllerWithIdentifier:@"NvPublicViewController"];
     publicVc.imagePath = coverImagePath;
     publicVc.hasDraft = hasDraft;
-    publicVc.draftInfo = draftInfo;
-    publicVc.taskId = taskId;
+    publicVc.draftInfo = description;
+    publicVc.projectId = projectId;
     [videoEditNavigationController pushViewController:publicVc animated:YES];
 }
 
@@ -378,4 +378,6 @@ videoEditNavigationController:(UINavigationController *)videoEditNavigationContr
                      selected:(BOOL)selected {
     NSLog(@"---> configCollectViewCell");
 }
+
+
 @end

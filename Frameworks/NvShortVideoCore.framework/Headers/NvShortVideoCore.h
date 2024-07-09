@@ -40,6 +40,7 @@ FOUNDATION_EXPORT const unsigned char NvShortVideoCoreVersionString[];
 #import <NvShortVideoCore/NvEditProjectInfo.h>
 #import <NvShortVideoCore/NvSqlite3Operator.h>
 #import <NvShortVideoCore/NvPushManager.h>
+#import <NvShortVideoCore/YYModel.h>
 
 
 //MARK: -- Config
@@ -103,6 +104,7 @@ FOUNDATION_EXPORT const unsigned char NvShortVideoCoreVersionString[];
 #import "NvEditProjectInfo.h"
 #import "NvSqlite3Operator.h"
 #import "NvPushManager.h"
+#import "YYModel.h"
 
 //MARK: -- Config
 #import "NvVideoConfig.h"
