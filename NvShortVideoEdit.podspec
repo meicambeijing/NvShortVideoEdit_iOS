@@ -31,21 +31,15 @@ Pod::Spec.new do |spec|
   
   
   #iOS sdk文件放在Frameworks文件夹下 需要的配置，
-  spec.ios.vendored_frameworks = 'Frameworks/*.framework'
-  spec.ios.pod_target_xcconfig = {
-    'EXCLUDED_ARCHS[sdk=iphonesimulator*]' => 'x86_64',
-    'ARCHS' => '$(ARCHS_STANDARD)'
-  }
+  spec.ios.vendored_frameworks = ['Frameworks/MNN.xcframework', 'Frameworks/NvShortVideoCore.xcframework', 'Frameworks/NvStreamingSdkCore.xcframework']
+  spec.ios.pod_target_xcconfig = { 'GCC_WARN_INHIBIT_ALL_WARNINGS' => 'YES' }
+  spec.ios.user_target_xcconfig = { 'BUILD_LIBRARY_FOR_DISTRIBUTION' => 'YES' }
+  spec.ios.pod_target_xcconfig = { 'BUILD_LIBRARY_FOR_DISTRIBUTION' => 'YES' }
 
-  spec.ios.user_target_xcconfig = {
-    'EXCLUDED_ARCHS[sdk=iphonesimulator*]' => 'x86_64',
-    'ARCHS' => '$(ARCHS_STANDARD)'
-  }
+#  spec.ios.dependency 'SSZipArchive'
+#  spec.ios.dependency 'SDWebImageWebPCoder'
 
-
-  spec.ios.dependency 'SSZipArchive'
-  spec.ios.dependency 'SDWebImageWebPCoder'
-
+ 
 end
 
   

@@ -1,0 +1,6 @@
+framework module NvShortVideoCore {
+  umbrella header "NvShortVideoCore.h"
+  export *
+
+  module * { export * }
+}

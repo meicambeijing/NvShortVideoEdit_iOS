@@ -64,10 +64,11 @@ static NvHttpRequest *sharedInstance = nil;
         
         NSURLSessionConfiguration *configuration = [NSURLSessionConfiguration defaultSessionConfiguration];
         self.urlSession = [NSURLSession sessionWithConfiguration:configuration];
-        
+#if __has_include(<SDWebImageWebPCoder/SDWebImageWebPCoder.h>)
         // Add coder
         SDImageWebPCoder *webPCoder = [SDImageWebPCoder sharedCoder];
         [[SDImageCodersManager sharedManager] addCoder:webPCoder];
+#endif
     }
     return self;
 }
@@ -750,15 +751,15 @@ typedef void (^NvDownloadCompletionHandler)(NSString * __nullable packagePath,
         int errNo = [[responseObject objectForKey:@"code"] intValue];
         if(errNo == 1){
             NSArray* array = [responseObject objectForKey:@"data"];
-            NSMutableArray *mutableArray = [NSMutableArray array];
-            for (NSDictionary *dict in array) {
-                NvTemplateMaterialCategoryModel *model = [[NvTemplateMaterialCategoryModel alloc]init];
-                model.category = [dict[@"id"] integerValue];
-                model.displayName = dict[@"displayName"];
-                [mutableArray addObject:model];
-            }
+//            NSMutableArray *mutableArray = [NSMutableArray array];
+//            for (NSDictionary *dict in array) {
+//                NvTemplateMaterialCategoryModel *model = [[NvTemplateMaterialCategoryModel alloc]init];
+//                model.category = [dict[@"id"] integerValue];
+//                model.displayName = dict[@"displayName"];
+//                [mutableArray addObject:model];
+//            }
             
-            success(mutableArray, NO, responseObject);
+            success(array, NO, responseObject);
         }else{
             failure(nil);
         }
@@ -1000,6 +1001,7 @@ typedef void (^NvDownloadCompletionHandler)(NSString * __nullable packagePath,
     return ret;
 #else
     NSLog(@"♥️: zip decompression not implemented");
+    return NO;
 #endif
 }
 
