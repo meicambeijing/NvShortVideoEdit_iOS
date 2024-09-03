@@ -30,12 +30,11 @@
    
    ```
    platform :ios, '12.0'
-   source 'https://github.com/CocoaPods/Specs.git'
    use_frameworks!
    
    target 'App' do
      # NvShortVideoCore
-     pod 'NvShortVideoEdit',    :path => '../Pods-NvShortVideoEdit'
+     pod 'NvShortVideoEdit', '~> 0.0.1'
    end
    ```
 
