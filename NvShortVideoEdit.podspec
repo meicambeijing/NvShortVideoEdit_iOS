@@ -10,7 +10,7 @@ Pod::Spec.new do |spec|
   spec.homepage     = "https://www.meishesdk.com"
   spec.license      = { :type => "MIT", :file => "LICENSE" }
   spec.author       = { "meishe" => "meicamapp@meishesdk.com" }
-  spec.source       = { :git => "https://github.com/meicambeijing/NvShortVideoEdit.git", :tag => "#{spec.version}" }
+  spec.source       = { :git => "https://github.com/meicambeijing/NvShortVideoEdit_iOS.git", :tag => "#{spec.version}" }
 
   spec.platform              = :ios
   spec.static_framework      = false
