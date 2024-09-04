@@ -1,33 +1,34 @@
-# 美摄短视频模块接入指引
+# Meishe short video module access guide
 
-## 开发环境要求
+## Development environment requirements
 
-* iOS 12.0 及以上的 iPhone
+* iOS 12.0 and above
 * Swift 5 
 * CocoaPods
 
-## 支持媒体格式
+## Support media formats
 
-详见：[美摄sdk产品概述](https://www.meishesdk.com/ios/doc_ch/html/content/Introduction_8md.html)
+For details, see: [Meishes sdk product overview](https://www.meishesdk.com/ios/doc_en/html/content/Introduction_8md.html)
 
-## 系统授权
+## System authorization
 
-App 需要在 Info.plist 中添加以下权限，否则将无法使用短视频模块。
+App needs to add the following permissions in Info.plist, otherwise it will not be able to use the short video module.
+
 
 ```xml
 <key>NSCameraUsageDescription</key>
-<string>App需要您的同意,才能访问相机</string>
+<string>AppYour consent is required to access the camera</string>
 <key>NSMicrophoneUsageDescription</key>
-<string>App需要您的同意,才能访问麦克风</string>
+<string>AppYour consent is required to access the microphone</string>
 <key>NSPhotoLibraryUsageDescription</key>
-<string>App需要您的同意,才能访问相册</string>
+<string>AppYour consent is required to access the album</string>
 <key>NSAppleMusicUsageDescription</key>
-<string>App需要您的同意,才能访问音乐</string>
+<string>AppYour consent is required to access music</string>
 ```
 
-## 美摄SDK授权
+## Meishe SDK authorization
 
-美摄SDK授权方法：
+Meishe SDK authorization method:
 
 ```objective-c
 #import <NvStreamingSdkCore/NvsStreamingContext.h>
@@ -49,16 +50,17 @@ App 需要在 Info.plist 中添加以下权限，否则将无法使用短视频�
 @end
 ```
 
-在[美摄官网](https://www.meishesdk.com)注册用户后，创建应用，配置Bundle Idenfity，由美摄商务同事开通授权后，可在应用信息中下载授权文件。
+After registering as a user on [Meishe‘s official website](https://en.meishesdk.com/), create an application and configure the App package name. After a Meishe business colleague activates the authorization, you can download the authorization file in the application information.
 
-需要将授权.lic文件添加到App工程中
 
-> SDK授权和App的Bundle Idenfity绑定。未授权时，SDK全功能不再检查授权，都可以使用，绘制的画面会带MEISHE水印。
+> The SDK authorization is bound to the Bundle Idenfity of the App. When it is not authorized, all functions of the SDK can be used without checking the authorization, and the drawn picture will have the MEISHE watermark.
 
-## 网络接口配置
 
-短视频模块用到的滤镜、贴纸、音乐等文件均通过网络接口获取。需要服务端按接口文档实现相应的接口。
-在App工程中配置服务器地址及公共参数。
+## Network interface configuration
+
+The filters, stickers, music and other files used in the short video module are all obtained through the network interface. The server needs to implement the corresponding interface according to the interface document.
+
+Configure the server address and public parameters in the App project.
 
 ```objective-c
 #import <NvShortVideoCore/NvShortVideoCore.h>
@@ -96,19 +98,19 @@ request.clientId = NV_ClientId;
 request.clientSecret = NV_ClientSecret;
 request.assemblyId = NV_AssemblyId;
 
-// MARK: -- 设置模块网络接口
+// MARK: -- 设置模块网络接口 / Set the network interface of the module
 NvMaterialCenter* materialCenter = [NvMaterialCenter sharedInstance];
 materialCenter.netDelegate = request;
 ```
 
-## 预制素材
+## Preset material
 
-短视频模块依赖的素材包可根据需要选择。预制素材详见：[短视频模块预制素材](./PrefabricatedMaterial_ch.html)
+The material packages that the short video module relies on can be selected as needed. For details of preset materials, see: [Short video module preset materials](PrefabricatedMaterial_en.html)
 
-## 短视频模块主要方法
+## Main methods of short video module
 
-模块主要方法定义在[NvModuleManager.h](./interface_nv_module_manager.html)文件中。
-调用示例：
+The module main methods are defined in the [NvModuleManager.h](./interface_nv_module_manager.html) file.
+Example call:
 
 ```objective-c
 // 引入头文件
@@ -124,7 +126,7 @@ materialCenter.netDelegate = request;
 }
 ```
 
-### 视频录制
+### Video recording
 
 ```objective-c
  /*! \if ENGLISH
@@ -149,7 +151,7 @@ materialCenter.netDelegate = request;
                                          with:(void(^)(void))complatetionHandler;
 ```
 
-### 合拍
+### Picture in Picture
 
 ```objective-c
 /*! \if ENGLISH
@@ -192,7 +194,7 @@ materialCenter.netDelegate = request;
                                              with:(void(^)(void))complatetionHandler;
 ```
 
-### 视频编辑
+### Video editing
 
 ```objective-c
 /*! \if ENGLISH
@@ -214,7 +216,7 @@ materialCenter.netDelegate = request;
                                       with:(void(^)(void))complatetionHandler;
 ```
 
-### 视频编辑完成回调
+### Video editing complete callback
 
 ```objective-c
 /*!
@@ -254,11 +256,10 @@ materialCenter.netDelegate = request;
                 draftInfo:(NSString *_Nullable)draftInfo
 videoEditNavigationController:(UINavigationController *)videoEditNavigationController;
 
-
 @end
 ```
 
-### 选择封面
+### Select cover
 
 ```objective-c
 /*! \if ENGLISH
@@ -278,7 +279,7 @@ videoEditNavigationController:(UINavigationController *)videoEditNavigationContr
 - (void)saveCover:(NSString *)coverPath with:(nullable void(^)(BOOL success))completionHandler;
 ```
 
-### 保存草稿
+### Save draft
 
 ```objective-c
 /*! \if ENGLISH
@@ -296,7 +297,7 @@ videoEditNavigationController:(UINavigationController *)videoEditNavigationContr
 - (BOOL)saveCurrentDraftWithDraftInfo:(NSString *_Nullable)infoString;
 ```
 
-### 合成视频
+### Synthetic video
 
 ```objective-c
 /*! \if ENGLISH
@@ -314,7 +315,7 @@ videoEditNavigationController:(UINavigationController *)videoEditNavigationContr
 - (BOOL)compileCurrentTimeline:(NSDictionary *_Nullable)configure;
 ```
 
-### 视频合成回调
+### Video synthesis callback
 
 ```objective-c
 /*! \if ENGLISH
@@ -356,7 +357,7 @@ videoEditNavigationController:(UINavigationController *)videoEditNavigationContr
 @end
 ```
 
-### 保存视频
+### Save video file
 
 ```objective-c
 /*! \if ENGLISH
@@ -374,7 +375,7 @@ videoEditNavigationController:(UINavigationController *)videoEditNavigationContr
 - (void)saveVideo:(NSString *)videoPath with:(nullable void(^)(BOOL success))completionHandler;
 ```
 
-### 保存封面图片
+### Save cover image
 
 ```objective-c
 /*! \if ENGLISH
@@ -394,9 +395,9 @@ videoEditNavigationController:(UINavigationController *)videoEditNavigationContr
 - (void)saveCover:(NSString *)coverPath with:(nullable void(^)(BOOL success))completionHandler;
 ```
 
-### 退出短视频模块
+### Exit short video module
 
-视频发布页退出时调用
+Call it when the video publishing page exits
 
 ```objective-c
 /*! \if ENGLISH
@@ -414,9 +415,9 @@ videoEditNavigationController:(UINavigationController *)videoEditNavigationContr
 - (BOOL)exitVideoEdit:(NSString *)taskId;
 ```
 
-### 获取草稿列表
+### Get draft list
 
-方法定义在[NvDraftManager.h](./interface_nv_draft_manager.html)中
+The method is defined in [NvDraftManager.h](./interface_nv_draft_manager.html)
 
 ```objective-c
 /*! \if ENGLISH
@@ -432,9 +433,9 @@ videoEditNavigationController:(UINavigationController *)videoEditNavigationContr
 + (NSMutableArray<NvDraftModel *> *)getUserDraftFileArray;
 ```
 
-### 删除草稿
+### Delete draft
 
-方法定义在[NvDraftManager.h](./interface_nv_draft_manager.html)中
+The method is defined in [NvDraftManager.h](./interface_nv_draft_manager.html)
 
 ```objective-c
 /*! \if ENGLISH
@@ -450,9 +451,9 @@ videoEditNavigationController:(UINavigationController *)videoEditNavigationContr
 + (void)deleteDraftFile:(NvDraftModel *)model;
 ```
 
-### 打开草稿
+### Open draft
 
-方法定义在[NvModuleManager.h](./interface_nv_module_manager.html)中
+The method is defined in [NvModuleManager.h](./interface_nv_module_manager.html)
 
 ```objective-c
 /*! \if ENGLISH
@@ -473,10 +474,8 @@ videoEditNavigationController:(UINavigationController *)videoEditNavigationContr
              config:(NvVideoConfig * _Nullable)config;
 ```
 
-## 模块设置
 
-短视频模块设置类NvVideoConfig，包含功能模块设置、UI定制。详见：[短视频功能模块设置](functionConfiguration_ch.html)、[短视频UI模块设置](UIConfiguration_ch.html)
+## Module settings
 
-## 开发者合规指南
+The short video module setting class NvVideoConfig includes function module settings and UI customization. For details, see: [Short video function module settings](functionConfiguration_en.html)、[Short video UI module settings](UIConfiguration_en.html)
 
-[开发者合规指南](https://www.meishesdk.com/compliance-guide/)
